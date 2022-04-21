@@ -49,7 +49,7 @@ final class MySqlActivatedUserStorage implements IStoreActivatedUsers
         );
     }
 
-    public function activate(UserToActivate $user, Token $authenticationToken): void
+    public function activate(Token $authenticationToken): void
     {
         $this->connection->beginTransaction();
         try {
@@ -59,7 +59,7 @@ final class MySqlActivatedUserStorage implements IStoreActivatedUsers
                     'is_active' => true,
                 ],
                 [
-                    'id' => $user->getId(),
+                    'id' => $authenticationToken->getUserId(),
                 ],
                 [
                     'updated_at' => 'datetime',
@@ -69,7 +69,7 @@ final class MySqlActivatedUserStorage implements IStoreActivatedUsers
             $this->connection->delete(
                 'security_tokens',
                 [
-                    'user_id' => $user->getId(),
+                    'user_id' => $authenticationToken->getUserId(),
                     'type' => TokenType::ACTIVATION->name,
                 ]
             );
@@ -80,7 +80,7 @@ final class MySqlActivatedUserStorage implements IStoreActivatedUsers
                     'created_at' => $authenticationToken->getCreatedAt(),
                     'expire_at' => $authenticationToken->getExpirationDate(),
                     'type' => $authenticationToken->getTokenType()->name,
-                    'user_id' => $user->getId(),
+                    'user_id' => $authenticationToken->getUserId(),
                 ],
                 [
                     'created_at' => 'datetime',

@@ -12,5 +12,5 @@ interface IStoreAuthenticatedUsers
     /** @throws UserNotFound */
     public function getByEmail(Email $email): AuthenticatedUser;
 
-    public function renewAuthenticationToken(string $userId, Token $authenticationToken): void;
+    public function renewAuthenticationToken(Token $authenticationToken): void;
 }

@@ -14,6 +14,8 @@ use App\Security\Domain\Shared\ValueObject\Email;
 use App\Security\Domain\Shared\ValueObject\Password;
 use App\Security\Domain\Shared\ValueObject\TokenType;
 
+use Symfony\Component\Uid\Uuid;
+
 final class UseCase
 {
     private IStoreRegisteredUsers $userStorage;
@@ -40,10 +42,13 @@ final class UseCase
             throw new EmailIsInvalidOrAlreadyTaken();
         }
 
+        $userId = Uuid::v4();
+
         $user = UserToRegister::create(
+            $userId,
             $email,
             $this->passwordHasher->hash($password),
-            $this->tokenGenerator->generate(TokenType::ACTIVATION)
+            $this->tokenGenerator->generate($userId->jsonSerialize(), TokenType::ACTIVATION)
         );
 
         $this->userStorage->create($user);

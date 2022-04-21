@@ -5,12 +5,14 @@ namespace App\Security\Domain\Shared\ValueObject;
 
 final class Token
 {
+    private string $userId;
     private string $value;
     private \DateInterval $duration;
     private \DateTimeImmutable $createdAt;
     private TokenType $tokenType;
 
     public function __construct(
+        string $userId,
         string $value,
         \DateTimeImmutable $createdAt,
         TokenType $tokenType
@@ -22,6 +24,12 @@ final class Token
         };
         $this->createdAt = $createdAt;
         $this->tokenType = $tokenType;
+        $this->userId = $userId;
+    }
+
+    public function getUserId(): string
+    {
+        return $this->userId;
     }
 
     public function getValue(): string
@@ -42,10 +50,5 @@ final class Token
     public function getTokenType(): TokenType
     {
         return $this->tokenType;
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->getExpirationDate() < new \DateTimeImmutable();
     }
 }

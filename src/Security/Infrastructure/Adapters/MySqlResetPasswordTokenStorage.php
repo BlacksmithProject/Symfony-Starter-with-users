@@ -20,7 +20,7 @@ final class MySqlResetPasswordTokenStorage implements IStoreResetPasswordTokens
         $this->connection = $connection;
     }
 
-    public function renewForUser(Email $email, Token $token): ForgottenPasswordDeclaration
+    public function getUserId(Email $email): string
     {
         $id = $this->connection->createQueryBuilder()
             ->select('id')
@@ -33,12 +33,20 @@ final class MySqlResetPasswordTokenStorage implements IStoreResetPasswordTokens
             throw new UserNotFound();
         }
 
+        return $id;
+    }
+
+
+    public function renewForUser(Token $token): ForgottenPasswordDeclaration
+    {
+
+
         $this->connection->beginTransaction();
         try {
             $this->connection->delete(
                 'security_tokens',
                 [
-                    'user_id' => $id,
+                    'user_id' => $token->getUserId(),
                     'type' => TokenType::FORGOTTEN_PASSWORD->name,
                 ]
             );
@@ -49,7 +57,7 @@ final class MySqlResetPasswordTokenStorage implements IStoreResetPasswordTokens
                     'created_at' => $token->getCreatedAt(),
                     'expire_at' => $token->getExpirationDate(),
                     'type' => $token->getTokenType()->name,
-                    'user_id' => $id,
+                    'user_id' => $token->getUserId(),
                 ],
                 [
                     'created_at' => 'datetime',
@@ -63,6 +71,6 @@ final class MySqlResetPasswordTokenStorage implements IStoreResetPasswordTokens
             throw $exception;
         }
 
-        return new ForgottenPasswordDeclaration($email->value(), $token->getValue());
+        return new ForgottenPasswordDeclaration($token->getValue());
     }
 }

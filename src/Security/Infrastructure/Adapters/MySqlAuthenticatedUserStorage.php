@@ -47,12 +47,12 @@ final class MySqlAuthenticatedUserStorage implements IStoreAuthenticatedUsers
         );
     }
 
-    public function renewAuthenticationToken(string $userId, Token $authenticationToken): void
+    public function renewAuthenticationToken(Token $authenticationToken): void
     {
         $this->connection->delete(
             'security_tokens',
             [
-                'user_id' => $userId,
+                'user_id' => $authenticationToken->getUserId(),
                 'type' => TokenType::AUTHENTICATION->name,
             ]
         );
@@ -63,7 +63,7 @@ final class MySqlAuthenticatedUserStorage implements IStoreAuthenticatedUsers
                 'created_at' => $authenticationToken->getCreatedAt(),
                 'expire_at' => $authenticationToken->getExpirationDate(),
                 'type' => $authenticationToken->getTokenType()->name,
-                'user_id' => $userId,
+                'user_id' => $authenticationToken->getUserId(),
             ],
             [
                 'created_at' => 'datetime',

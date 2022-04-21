@@ -8,5 +8,5 @@ use App\Security\Domain\Shared\ValueObject\TokenType;
 
 interface IGenerateToken
 {
-    public function generate(TokenType $tokenType): Token;
+    public function generate(string $userId, TokenType $tokenType): Token;
 }

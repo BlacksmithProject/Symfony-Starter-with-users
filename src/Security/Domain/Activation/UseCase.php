@@ -36,9 +36,9 @@ final class UseCase
             throw new TokenIsExpired();
         }
 
-        $authenticationToken = $this->tokenGenerator->generate(TokenType::AUTHENTICATION);
+        $authenticationToken = $this->tokenGenerator->generate($userToActivate->getId(), TokenType::AUTHENTICATION);
 
-        $this->userStorage->activate($userToActivate, $authenticationToken);
+        $this->userStorage->activate($authenticationToken);
 
         return $this->userStorage->get(Uuid::fromString($userToActivate->getId()));
     }

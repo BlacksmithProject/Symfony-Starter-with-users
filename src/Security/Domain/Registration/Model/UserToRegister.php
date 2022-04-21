@@ -28,9 +28,9 @@ final class UserToRegister
         $this->activationToken = $activationToken;
     }
 
-    public static function create(Email $email, string $password, Token $activationToken): self
+    public static function create(Uuid $id, Email $email, string $password, Token $activationToken): self
     {
-        return new self(Uuid::v4(), $email, $password, $activationToken);
+        return new self($id, $email, $password, $activationToken);
     }
 
     public function getPassword(): string

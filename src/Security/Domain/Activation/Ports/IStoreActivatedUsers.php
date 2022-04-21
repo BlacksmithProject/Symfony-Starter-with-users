@@ -15,7 +15,7 @@ interface IStoreActivatedUsers
     /** @throws InvalidToken */
     public function findByActivationToken(string $tokenValue): UserToActivate;
 
-    public function activate(UserToActivate $user, Token $authenticationToken): void;
+    public function activate(Token $authenticationToken): void;
 
     /** @throws UserNotFound */
     public function get(Uuid $uuid): ActivatedUser;

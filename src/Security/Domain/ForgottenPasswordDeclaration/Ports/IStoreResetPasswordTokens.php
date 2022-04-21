@@ -10,5 +10,7 @@ use App\Security\Domain\Shared\ValueObject\Token;
 interface IStoreResetPasswordTokens
 {
     /** @throws UserNotFound */
-    public function renewForUser(Email $email, Token $token): ForgottenPasswordDeclaration;
+    public function getUserId(Email $email): string;
+
+    public function renewForUser(Token $token): ForgottenPasswordDeclaration;
 }

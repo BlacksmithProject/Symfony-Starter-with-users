@@ -26,6 +26,8 @@ final class UseCase
      */
     public function execute(Email $email): ForgottenPasswordDeclaration
     {
-        return $this->tokenStorage->renewForUser($email, $this->tokenGenerator->generate(TokenType::FORGOTTEN_PASSWORD));
+        $userId = $this->tokenStorage->getUserId($email);
+
+        return $this->tokenStorage->renewForUser($this->tokenGenerator->generate($userId, TokenType::FORGOTTEN_PASSWORD));
     }
 }

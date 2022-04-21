@@ -37,7 +37,9 @@ final class UseCase
         $user = $this->userStorage->getByEmail($email);
 
         if ($user->authenticationTokenHasExpired()) {
-            $this->userStorage->renewAuthenticationToken($user->getId(), $this->tokenGenerator->generate(TokenType::AUTHENTICATION));
+            $this->userStorage->renewAuthenticationToken(
+                $this->tokenGenerator->generate($user->getId(), TokenType::AUTHENTICATION)
+            );
 
             $user = $this->userStorage->getByEmail($email);
         }
