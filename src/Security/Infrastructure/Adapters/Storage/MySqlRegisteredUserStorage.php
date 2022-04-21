@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\Adapters;
+namespace App\Security\Infrastructure\Adapters\Storage;
 
 use App\Security\Domain\Registration\Model\RegisteredUser;
 use App\Security\Domain\Registration\Model\UserToRegister;

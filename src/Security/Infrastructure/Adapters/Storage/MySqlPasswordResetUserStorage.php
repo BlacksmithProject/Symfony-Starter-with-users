@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\Adapters;
+namespace App\Security\Infrastructure\Adapters\Storage;
 
 use App\Security\Domain\PasswordReset\Model\UserToResetPassword;
 use App\Security\Domain\PasswordReset\Ports\IStorePasswordResetUsers;

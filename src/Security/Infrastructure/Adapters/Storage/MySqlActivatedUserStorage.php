@@ -1,13 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Infrastructure\Adapters;
+namespace App\Security\Infrastructure\Adapters\Storage;
 
 use App\Security\Domain\Activation\Model\ActivatedUser;
 use App\Security\Domain\Activation\Model\UserToActivate;
 use App\Security\Domain\Activation\Ports\IStoreActivatedUsers;
 use App\Security\Domain\Shared\Exception\InvalidToken;
-use App\Security\Domain\Shared\Exception\TokenIsExpired;
 use App\Security\Domain\Shared\Exception\UserNotFound;
 use App\Security\Domain\Shared\ValueObject\Token;
 use App\Security\Domain\Shared\ValueObject\TokenType;
