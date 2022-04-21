@@ -15,10 +15,12 @@ use Symfony\Component\Uid\Uuid;
 final class MySqlRegisteredUserStorage implements IStoreRegisteredUsers
 {
     private Connection $connection;
+    private MySqlTokenStorage $tokenStorage;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, MySqlTokenStorage $tokenStorage)
     {
         $this->connection = $connection;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function isEmailAlreadyUsed(Email $email): bool
@@ -56,22 +58,7 @@ final class MySqlRegisteredUserStorage implements IStoreRegisteredUsers
                 ]
             );
 
-            $token = $user->getActivationToken();
-
-            $this->connection->insert(
-                'security_tokens',
-                [
-                    'value' => $token->getValue(),
-                    'created_at' => $token->getCreatedAt(),
-                    'expire_at' => $token->getExpirationDate(),
-                    'type' => $token->getTokenType()->name,
-                    'user_id' => $user->getUuid()->jsonSerialize(),
-                ],
-                [
-                    'created_at' => 'datetime',
-                    'expire_at' => 'datetime',
-                ]
-            );
+            $this->tokenStorage->saveToken($user->getActivationToken());
 
             $this->connection->commit();
         } catch (\Exception $exception) {

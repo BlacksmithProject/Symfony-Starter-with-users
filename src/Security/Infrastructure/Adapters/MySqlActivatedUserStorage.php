@@ -18,10 +18,12 @@ use Symfony\Component\Uid\Uuid;
 final class MySqlActivatedUserStorage implements IStoreActivatedUsers
 {
     private Connection $connection;
+    private MySqlTokenStorage $tokenStorage;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, MySqlTokenStorage $tokenStorage)
     {
         $this->connection = $connection;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -66,27 +68,10 @@ final class MySqlActivatedUserStorage implements IStoreActivatedUsers
                     'is_active' => 'boolean',
                 ]
             );
-            $this->connection->delete(
-                'security_tokens',
-                [
-                    'user_id' => $authenticationToken->getUserId(),
-                    'type' => TokenType::ACTIVATION->name,
-                ]
-            );
-            $this->connection->insert(
-                'security_tokens',
-                [
-                    'value' => $authenticationToken->getValue(),
-                    'created_at' => $authenticationToken->getCreatedAt(),
-                    'expire_at' => $authenticationToken->getExpirationDate(),
-                    'type' => $authenticationToken->getTokenType()->name,
-                    'user_id' => $authenticationToken->getUserId(),
-                ],
-                [
-                    'created_at' => 'datetime',
-                    'expire_at' => 'datetime',
-                ]
-            );
+
+            $this->tokenStorage->removeToken($authenticationToken->getUserId(), TokenType::ACTIVATION);
+            $this->tokenStorage->saveToken($authenticationToken);
+
             $this->connection->commit();
         } catch (Exception $e) {
             $this->connection->rollBack();

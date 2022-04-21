@@ -14,10 +14,12 @@ use Doctrine\DBAL\Connection;
 final class MySqlAuthenticatedUserStorage implements IStoreAuthenticatedUsers
 {
     private Connection $connection;
+    private MySqlTokenStorage $tokenStorage;
 
-    public function __construct(Connection $connection)
+    public function __construct(Connection $connection, MySqlTokenStorage $tokenStorage)
     {
         $this->connection = $connection;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function getByEmail(Email $email): AuthenticatedUser
@@ -49,26 +51,7 @@ final class MySqlAuthenticatedUserStorage implements IStoreAuthenticatedUsers
 
     public function renewAuthenticationToken(Token $authenticationToken): void
     {
-        $this->connection->delete(
-            'security_tokens',
-            [
-                'user_id' => $authenticationToken->getUserId(),
-                'type' => TokenType::AUTHENTICATION->name,
-            ]
-        );
-        $this->connection->insert(
-            'security_tokens',
-            [
-                'value' => $authenticationToken->getValue(),
-                'created_at' => $authenticationToken->getCreatedAt(),
-                'expire_at' => $authenticationToken->getExpirationDate(),
-                'type' => $authenticationToken->getTokenType()->name,
-                'user_id' => $authenticationToken->getUserId(),
-            ],
-            [
-                'created_at' => 'datetime',
-                'expire_at' => 'datetime',
-            ]
-        );
+        $this->tokenStorage->removeToken($authenticationToken->getUserId(), TokenType::AUTHENTICATION);
+        $this->tokenStorage->saveToken($authenticationToken);
     }
 }
