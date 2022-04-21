@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Security\Domain\Authentication\Model;
+namespace App\Security\Domain\Shared\Model;
 
 use JetBrains\PhpStorm\ArrayShape;
 

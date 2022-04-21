@@ -5,15 +5,14 @@ namespace App\Security\Domain\Registration;
 
 use App\Security\Domain\Registration\Model\RegisteredUser;
 use App\Security\Domain\Registration\Model\UserToRegister;
-use App\Security\Domain\Registration\Ports\IHashPasswords;
 use App\Security\Domain\Registration\Ports\IStoreRegisteredUsers;
 use App\Security\Domain\Shared\Exception\EmailIsInvalidOrAlreadyTaken;
 use App\Security\Domain\Shared\Exception\UserNotFound;
 use App\Security\Domain\Shared\Ports\IGenerateToken;
+use App\Security\Domain\Shared\Ports\IHashPasswords;
 use App\Security\Domain\Shared\ValueObject\Email;
 use App\Security\Domain\Shared\ValueObject\Password;
 use App\Security\Domain\Shared\ValueObject\TokenType;
-
 use Symfony\Component\Uid\Uuid;
 
 final class UseCase

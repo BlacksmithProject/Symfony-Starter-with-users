@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Security\Domain\Authentication\Ports;
+namespace App\Security\Domain\Shared\Ports;
 
-use App\Security\Domain\Authentication\Model\AuthenticatedUser;
 use App\Security\Domain\Shared\Exception\UserNotFound;
+use App\Security\Domain\Shared\Model\AuthenticatedUser;
 use App\Security\Domain\Shared\ValueObject\Email;
 use App\Security\Domain\Shared\ValueObject\Token;
 

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Adapters;
 
-use App\Security\Domain\Authentication\Model\AuthenticatedUser;
-use App\Security\Domain\Authentication\Ports\IStoreAuthenticatedUsers;
 use App\Security\Domain\Shared\Exception\UserNotFound;
+use App\Security\Domain\Shared\Model\AuthenticatedUser;
+use App\Security\Domain\Shared\Ports\IStoreAuthenticatedUsers;
 use App\Security\Domain\Shared\ValueObject\Email;
 use App\Security\Domain\Shared\ValueObject\Token;
 use App\Security\Domain\Shared\ValueObject\TokenType;

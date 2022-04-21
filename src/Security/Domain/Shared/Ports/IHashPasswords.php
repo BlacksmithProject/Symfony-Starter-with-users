@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Domain\Registration\Ports;
+namespace App\Security\Domain\Shared\Ports;
 
 use App\Security\Domain\Shared\ValueObject\Password;
 

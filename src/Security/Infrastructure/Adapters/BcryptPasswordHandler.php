@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Adapters;
 
 use App\Security\Domain\Authentication\Ports\IVerifyPasswords;
-use App\Security\Domain\Registration\Ports\IHashPasswords;
 use App\Security\Domain\Shared\Exception\InvalidPassword;
+use App\Security\Domain\Shared\Ports\IHashPasswords;
 use App\Security\Domain\Shared\ValueObject\Password;
 
 final class BcryptPasswordHandler implements IHashPasswords, IVerifyPasswords
