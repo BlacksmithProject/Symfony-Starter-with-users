@@ -13,12 +13,23 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
+
+    App\Security\Infrastructure\:
+        resource: '../src/Security/Infrastructure/'
         exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+            - '../src/Security/Infrastructure/Http/'
+
+    App\Security\Infrastructure\Http\:
+        resource: '../src/Security/Infrastructure/Http/'
+        tags: ['controller.service_arguments']
+        exclude:
+            - '../src/Security/Infrastructure/Http/Exception/'
+
+    App\Security\Domain\:
+        resource: '../src/Security/Domain/'
+        exclude:
+            - '../src/Security/Domain/**/Model'
+            - '../src/Security/Domain/**/ValueObject'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

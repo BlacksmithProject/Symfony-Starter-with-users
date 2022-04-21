@@ -1,3 +1,8 @@
 kernel:
     resource: ../src/Kernel.php
     type: annotation
+
+users.registration:
+    path: /users
+    controller: App\Security\Infrastructure\Http\Registration\RegistrationController
+    methods: [POST]
