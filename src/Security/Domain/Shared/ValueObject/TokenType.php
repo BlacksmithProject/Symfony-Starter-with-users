@@ -7,4 +7,5 @@ enum TokenType
 {
     case ACTIVATION;
     case AUTHENTICATION;
+    case FORGOTTEN_PASSWORD;
 }
