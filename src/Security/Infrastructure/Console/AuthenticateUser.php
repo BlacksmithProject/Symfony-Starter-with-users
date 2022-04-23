@@ -3,34 +3,28 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Console;
 
-use App\Security\Domain\Ports\IHashPasswords;
 use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Password;
-use App\Security\Domain\UseCase\Registration;
-use App\Security\Domain\UseCase\Activation;
+use App\Security\Domain\UseCase\Authentication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class RegisterUser extends Command
+final class AuthenticateUser extends Command
 {
-    private Registration $registration;
-    private Activation $activation;
-    private IHashPasswords $passwordHasher;
+    private Authentication $authentication;
 
-    public function __construct(Registration $registration, Activation $activation, IHashPasswords $passwordHasher)
+    public function __construct(Authentication $authentication)
     {
-        parent::__construct('user:register');
-        $this->registration = $registration;
-        $this->activation = $activation;
-        $this->passwordHasher = $passwordHasher;
+        parent::__construct('user:authenticate');
+        $this->authentication = $authentication;
     }
 
     protected function configure()
     {
-        $this->setHelp('Create an activated user with an email and a password')
+        $this->setHelp('Authenticate a user with its email and password')
             ->addOption('email', 'email', InputOption::VALUE_OPTIONAL, 'provided email - MUST BE VALID')
             ->addOption('password', 'pwd', InputOption::VALUE_OPTIONAL, 'provided password');
     }
@@ -44,11 +38,9 @@ final class RegisterUser extends Command
             $password = $input->getOption('password') ?? $io->ask('Password ?', '');
 
             $email = new Email($email);
-            $password = Password::fromPlainPassword($password, $this->passwordHasher);
+            $password = new Password($password);
 
-            $activationToken = $this->registration->execute($email, $password);
-
-            $user = $this->activation->execute($activationToken->getValue());
+            $user = $this->authentication->execute($email, $password);
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
@@ -62,5 +54,6 @@ final class RegisterUser extends Command
 
             return Command::FAILURE;
         }
+
     }
 }

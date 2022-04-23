@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Console;
 
-use App\Security\Domain\ForgottenPasswordDeclaration\UseCase as ForgottenPasswordDeclaration;
-use App\Security\Domain\PasswordReset\UseCase as PasswordReset;
-use App\Security\Domain\Shared\ValueObject\Email;
-use App\Security\Domain\Shared\ValueObject\Password;
+use App\Security\Domain\Ports\IHashPasswords;
+use App\Security\Domain\ValueObject\Email;
+use App\Security\Domain\ValueObject\Password;
+use App\Security\Domain\UseCase\ForgottenPasswordDeclaration;
+use App\Security\Domain\UseCase\PasswordReset as PasswordReset;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,12 +18,14 @@ final class ResetPassword extends Command
 {
     private ForgottenPasswordDeclaration $forgottenPasswordDeclaration;
     private PasswordReset $passwordReset;
+    private IHashPasswords $passwordHasher;
 
-    public function __construct(ForgottenPasswordDeclaration $forgottenPasswordDeclaration, PasswordReset $passwordReset)
+    public function __construct(ForgottenPasswordDeclaration $forgottenPasswordDeclaration, PasswordReset $passwordReset, IHashPasswords $passwordHasher)
     {
         parent::__construct('user:reset-password');
         $this->forgottenPasswordDeclaration = $forgottenPasswordDeclaration;
         $this->passwordReset = $passwordReset;
+        $this->passwordHasher = $passwordHasher;
     }
 
     protected function configure()
@@ -41,15 +44,17 @@ final class ResetPassword extends Command
             $newPassword = $input->getOption('password') ?? $io->ask('New password ?', '');
 
             $email = new Email($email);
-            $password = new Password($newPassword);
+            $password = Password::fromPlainPassword($newPassword, $this->passwordHasher);
 
-            $declaration = $this->forgottenPasswordDeclaration->execute($email);
+            $forgottenPasswordUser = $this->forgottenPasswordDeclaration->execute($email);
 
-            $user = $this->passwordReset->execute($declaration->jsonSerialize()['forgottenPasswordTokenValue'], $password);
+            $user = $this->passwordReset->execute($forgottenPasswordUser->getToken()->getValue(), $password);
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
-            $io->writeln($user->jsonSerialize());
+            $io->writeln((string) $user->getUuid());
+            $io->writeln('Authentication Token : ');
+            $io->writeln($user->getToken()->getValue());
 
             return Command::SUCCESS;
         } catch (\Exception $e) {

@@ -31,13 +31,13 @@ This is a sort of _pragmatic_ Hexagonal architecture:
 ├── Security                    # Security Users and Tokens
 │       ├── Domain              # Business Logic
 │       │   ├── ...
-│       │   ├── UseCase         # Specific useCase, like "Registration"
-│       │   │   ├── Models      # Models used by the useCase
-│       │   │   ├── Ports       # Interfaces to interact with outside (like storage)
-│       │   │   │
-│       │   │   └── UseCase.php # UseCase Logic, THIS SHOULD BE YOUR DOMAIN ENTRYPOINT
+│       │   ├── Exception       
+│       │   ├── Model           
+│       │   ├── Ports           # Interfaces to interact with outside (like storage)
 │       │   │
-│       │   └── Shared          # Shared logic between at least two useCases (like ValueObjects)
+│       │   ├── UseCase         # Specific useCase, like "Registration". THIS SHOULD BE YOUR DOMAIN ENTRYPOINT
+│       │   │
+│       │   └── ValueObject
 │       ├── Infrastructure      # Technical Logic
 │       │   ├── Adapters        # Adapters for the Domain ports (you can modify those adapters)
 │       │   ├── Console         # Functionnal console commands
