@@ -33,7 +33,7 @@ final class Version20220421104643 extends AbstractMigration
             CREATE TABLE security_tokens (
                 value varchar(255) NOT NULL, 
                 created_at datetime NOT NULL,
-                expire_at datetime NOT NULL,
+                expired_at datetime NOT NULL,
                 type varchar(255) NOT NULL,
                 user_id varchar(36) NOT NULL,
                 FOREIGN KEY (user_id)
@@ -42,11 +42,15 @@ final class Version20220421104643 extends AbstractMigration
            );
        ");
         $this->addSql("CREATE UNIQUE INDEX idx_security_users_email ON security_users (email);");
+        $this->addSql("CREATE INDEX idx_security_tokens_user_id ON security_tokens (user_id);");
+        $this->addSql("CREATE INDEX idx_security_tokens_value ON security_tokens (value);");
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql("DROP INDEX idx_security_users_email;");
+        $this->addSql("DROP INDEX idx_security_tokens_user_id;");
         $this->addSql("DROP TABLE security_users;");
+        $this->addSql("DROP TABLE security_tokens;");
     }
 }
