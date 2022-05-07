@@ -10,17 +10,16 @@ use Symfony\Component\Uid\Uuid;
 
 final class TokensGenerator implements IGenerateTokens
 {
-    public function generate(Uuid $userId, TokenType $tokenType): Token
+    public function generate(Uuid $userId, TokenType $tokenType, \DateTimeImmutable $occurredOn): Token
     {
         $duration = match ($tokenType) {
-            default => \DateInterval::createFromDateString('1 day'),
-            TokenType::AUTHENTICATION => \DateInterval::createFromDateString('15 day'),
+            default => new \DateInterval('P1D'),
+            TokenType::AUTHENTICATION => new \DateInterval('P15D'),
         };
 
-        $now = new \DateTimeImmutable();
-        $expirationDate = $now->add($duration);
+        $expirationDate = $occurredOn->add($duration);
 
-        return new Token($userId, $this->generateValue(), $now, $expirationDate, $tokenType);
+        return new Token($userId, $this->generateValue(), $occurredOn, $expirationDate, $tokenType);
     }
 
     private function generateValue(): string

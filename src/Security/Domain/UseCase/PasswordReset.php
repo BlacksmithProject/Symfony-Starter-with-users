@@ -38,7 +38,7 @@ final class PasswordReset
      * @throws UserNotFound
      * @throws TokenNotFound
      */
-    public function execute(string $forgottenPasswordTokenValue, Password $newPassword): User
+    public function execute(string $forgottenPasswordTokenValue, Password $newPassword, \DateTimeImmutable $occurredOn): User
     {
         $token = $this->tokenProvider->getTokenByValue($forgottenPasswordTokenValue, TokenType::FORGOTTEN_PASSWORD);
 
@@ -51,7 +51,8 @@ final class PasswordReset
         $authenticatedUser =  $this->userBuilder->buildActiveWithAuthenticationToken(
             $forgottenPasswordUser->getUuid(),
             $forgottenPasswordUser->getEmail(),
-            $newPassword
+            $newPassword,
+            $occurredOn
         );
 
         $this->userStorage->updatePassword($authenticatedUser);

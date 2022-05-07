@@ -36,9 +36,9 @@ final class Activation
     /**
      * @throws TokenIsExpired
      * @throws TokenNotFound
-     * @throws UserNotFound
+     * @throws UserNotFound - should NEVER happen
      */
-    public function execute(string $tokenValue): User
+    public function execute(string $tokenValue, \DateTimeImmutable $occurredOn): User
     {
         $activationToken = $this->tokenProvider->getTokenByValue($tokenValue, TokenType::ACTIVATION);
 
@@ -50,7 +50,8 @@ final class Activation
         $activatedUser = $this->userBuilder->buildActiveWithAuthenticationToken(
             $userToActivate->getUuid(),
             $userToActivate->getEmail(),
-            $userToActivate->getPassword()
+            $userToActivate->getPassword(),
+            $occurredOn
         );
 
         $this->userStorage->activate($activatedUser);

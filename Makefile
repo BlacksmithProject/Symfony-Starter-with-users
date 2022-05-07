@@ -11,3 +11,6 @@ database-migrate:
 
 database-delete:
 	bin/console d:d:d --force
+
+unit-tests:
+	./vendor/bin/phpunit

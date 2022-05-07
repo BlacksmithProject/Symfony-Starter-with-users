@@ -21,6 +21,7 @@ final class Password
      */
     public static function fromPlainPassword(string $plainPassword, IHashPasswords $passwordHasher): self
     {
+        $plainPassword = trim($plainPassword, " ");
         if (mb_strlen($plainPassword) < self::MIN_LENGTH) {
             throw new PasswordIsTooShort();
         }
