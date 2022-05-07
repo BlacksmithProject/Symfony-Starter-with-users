@@ -32,9 +32,9 @@ final class Registration
 
     /**
      * @throws EmailIsInvalidOrAlreadyTaken
-     * @throws TokenNotFound
+     * @throws TokenNotFound - Should NEVER happen
      */
-    public function execute(Email $email, Password $password): Token
+    public function execute(Email $email, Password $password, \DateTimeImmutable $occurredOn): Token
     {
         if ($this->userStorage->isEmailAlreadyUsed($email)) {
             throw new EmailIsInvalidOrAlreadyTaken();
@@ -42,7 +42,7 @@ final class Registration
 
         $userId = Uuid::v4();
 
-        $user = $this->userBuilder->buildInactiveWithActivationToken($userId, $email, $password);
+        $user = $this->userBuilder->buildInactiveWithActivationToken($userId, $email, $password, $occurredOn);
 
         $this->userStorage->add($user);
 

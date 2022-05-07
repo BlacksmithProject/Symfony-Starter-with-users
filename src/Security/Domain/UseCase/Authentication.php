@@ -37,15 +37,18 @@ final class Authentication
     /**
      * @throws UserNotFound
      * @throws InvalidPassword
-     * @throws TokenIsExpired
      */
-    public function execute(Email $email, Password $password): User
+    public function execute(Email $email, Password $password, \DateTimeImmutable $occurredOn): User
     {
         $user = $this->userProvider->getActivatedUser($email);
         $this->passwordVerifier->verify($password->value(), $user->getPassword()->value());
 
         if ($user->getToken()->isExpired()) {
-            $this->tokenStorage->renew($this->tokenGenerator->generate($user->getUuid(), TokenType::AUTHENTICATION));
+            $this->tokenStorage->renew($this->tokenGenerator->generate(
+                $user->getUuid(),
+                TokenType::AUTHENTICATION,
+                $occurredOn
+            ));
 
             $user = $this->userProvider->getActivatedUser($email);
         }

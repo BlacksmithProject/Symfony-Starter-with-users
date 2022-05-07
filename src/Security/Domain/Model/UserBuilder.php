@@ -18,23 +18,23 @@ final class UserBuilder
         $this->tokenGenerator = $tokenGenerator;
     }
 
-    public function buildInactiveWithActivationToken(Uuid $id, Email $email, Password $password): User
+    public function buildInactiveWithActivationToken(Uuid $id, Email $email, Password $password, \DateTimeImmutable $occurredOn): User
     {
-        $activationToken = $this->tokenGenerator->generate($id, TokenType::ACTIVATION);
+        $activationToken = $this->tokenGenerator->generate($id, TokenType::ACTIVATION, $occurredOn);
 
         return new User($id, $email, $password, false, $activationToken);
     }
 
-    public function buildActiveWithAuthenticationToken(Uuid $id, Email $email, Password $password): User
+    public function buildActiveWithAuthenticationToken(Uuid $id, Email $email, Password $password, \DateTimeImmutable $occurredOn): User
     {
-        $authenticationToken = $this->tokenGenerator->generate($id, TokenType::AUTHENTICATION);
+        $authenticationToken = $this->tokenGenerator->generate($id, TokenType::AUTHENTICATION, $occurredOn);
 
         return new User($id, $email, $password, true, $authenticationToken);
     }
 
-    public function buildWithForgottenPasswordToken(Uuid $id, Email $email, Password $password): User
+    public function buildWithForgottenPasswordToken(Uuid $id, Email $email, Password $password, \DateTimeImmutable $occurredOn): User
     {
-        $authenticationToken = $this->tokenGenerator->generate($id, TokenType::FORGOTTEN_PASSWORD);
+        $authenticationToken = $this->tokenGenerator->generate($id, TokenType::FORGOTTEN_PASSWORD, $occurredOn);
 
         return new User($id, $email, $password, true, $authenticationToken);
     }

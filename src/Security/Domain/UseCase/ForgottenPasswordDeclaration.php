@@ -26,13 +26,14 @@ final class ForgottenPasswordDeclaration
     /**
      * @throws UserNotFound
      */
-    public function execute(Email $email): User
+    public function execute(Email $email, \DateTimeImmutable $occurredOn): User
     {
         $activatedUser = $this->userProvider->getActivatedUser($email);
         $forgottenPasswordUser = $this->userBuilder->buildWithForgottenPasswordToken(
             $activatedUser->getUuid(),
             $activatedUser->getEmail(),
-            $activatedUser->getPassword()
+            $activatedUser->getPassword(),
+            $occurredOn
         );
 
         $this->userStorage->renewForgottenPassword($forgottenPasswordUser);

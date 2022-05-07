@@ -46,9 +46,10 @@ final class ResetPassword extends Command
             $email = new Email($email);
             $password = Password::fromPlainPassword($newPassword, $this->passwordHasher);
 
-            $forgottenPasswordUser = $this->forgottenPasswordDeclaration->execute($email);
+            $now = new \DateTimeImmutable();
+            $forgottenPasswordUser = $this->forgottenPasswordDeclaration->execute($email, $now);
 
-            $user = $this->passwordReset->execute($forgottenPasswordUser->getToken()->getValue(), $password);
+            $user = $this->passwordReset->execute($forgottenPasswordUser->getToken()->getValue(), $password, $now);
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');

@@ -46,9 +46,10 @@ final class RegisterUser extends Command
             $email = new Email($email);
             $password = Password::fromPlainPassword($password, $this->passwordHasher);
 
-            $activationToken = $this->registration->execute($email, $password);
+            $now = new \DateTimeImmutable();
+            $activationToken = $this->registration->execute($email, $password, $now);
 
-            $user = $this->activation->execute($activationToken->getValue());
+            $user = $this->activation->execute($activationToken->getValue(), $now);
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');

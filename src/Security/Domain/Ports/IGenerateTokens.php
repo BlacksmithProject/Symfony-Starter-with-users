@@ -9,5 +9,5 @@ use Symfony\Component\Uid\Uuid;
 
 interface IGenerateTokens
 {
-    public function generate(Uuid $userId, TokenType $tokenType): Token;
+    public function generate(Uuid $userId, TokenType $tokenType, \DateTimeImmutable $occurredOn): Token;
 }

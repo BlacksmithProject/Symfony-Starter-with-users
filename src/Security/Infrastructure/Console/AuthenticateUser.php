@@ -40,7 +40,7 @@ final class AuthenticateUser extends Command
             $email = new Email($email);
             $password = new Password($password);
 
-            $user = $this->authentication->execute($email, $password);
+            $user = $this->authentication->execute($email, $password, new \DateTimeImmutable());
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
