@@ -2,6 +2,14 @@ ARG PHP_IMAGE=php:8.2-fpm
 
 FROM ${PHP_IMAGE} as php
 
+ARG USER_ID=1000
+ARG USER_NAME=php
+ARG GROUP_ID=1000
+ARG GROUP_NAME=php
+
+RUN groupadd -g ${GROUP_ID} ${GROUP_NAME} \
+    && useradd -m -u ${USER_ID} -g ${GROUP_NAME} ${USER_NAME}
+
 # Maj list paquet
 RUN apt-get update \
     && apt-get install -y wget \
@@ -23,7 +31,6 @@ RUN docker-php-source extract \
 	&& docker-php-source delete
 
 ARG XdebugFile=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
 
 RUN echo "xdebug.mode=develop,debug" >> $XdebugFile \
     && echo "xdebug.start_with_request=yes" >> $XdebugFile \

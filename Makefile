@@ -1,47 +1,32 @@
-# Executables (local)
-DOCKER_COMP = docker compose
-
-# Docker containers
-PHP_CONT = $(DOCKER_COMP) exec php
-
-# Executables
-PHP      = $(PHP_CONT) php
-COMPOSER = $(PHP_CONT) composer
-SYMFONY  = $(PHP_CONT) bin/console
-
-# Doctrine migrations commands
-MIGRATIONS_GENERATE = doctrine:migrations:generate
-MIGRATIONS_MIGRATE = doctrine:migrations:migrate --no-interaction
-
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : init help build up start down logs sh composer vendor sf cc
+.PHONY        : init help build up start down logs sh composer vendor sf cc migrations-generate migrations-execute test test-with-coverage
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
-init: start vendor cc ## Build and start the containers, install vendors and run migrations
+init: start vendor cc migrations-execute  ## Build and start the containers, install vendors and run migrations
 
 help: ## Outputs this help screen
 	@grep -E '(^[a-zA-Z0-9\./_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 ## —— Docker 🐳 ————————————————————————————————————————————————————————————————
 build: ## Builds the Docker images
-	@$(DOCKER_COMP) build --pull --no-cache
+	docker compose build --pull --no-cache
 
 up: ## Start the docker hub in detached mode (no logs)
-	@$(DOCKER_COMP) up --detach
+	docker compose up --detach
 
 start: build up ## Build and start the containers
 
 down: ## Stop the docker hub
-	@$(DOCKER_COMP) down --remove-orphans
+	docker compose down --remove-orphans
 
 sh: ## Connect to the PHP FPM container
-	@$(PHP_CONT) sh
+	docker compose exec php sh
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
-	@$(COMPOSER) $(c)
+	docker compose exec php composer $(c)
 
 vendor: ## Install vendors according to the current composer.lock file
 vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
@@ -50,14 +35,21 @@ vendor: composer
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
 	@$(eval c ?=)
-	@$(SYMFONY) $(c)
+	docker compose exec php bin/console $(c)
 
 cc: c=c:c ## Clear the cache
 cc: sf
 
-## —— Doctrine migrations ——————————————————————————————————————————————————————
-mg: c=$(MIGRATIONS_GENERATE) ## Generate Doctrine migrations
-mg: sf
+## —— Tools 🔧 —————————————————————————————————————————————————————————————————
 
-mm: c=$(MIGRATIONS_MIGRATE) ## Execute Doctrine migrations
-mm: sf
+migrations-generate:
+	docker compose exec php bin/console doctrine:migrations:generate
+
+migrations-execute:
+	docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
+
+test: ## Launch PHPUnit
+	docker compose exec php vendor/bin/phpunit
+
+test-with-coverage: ## Launch PHPUnit and generate a coverage
+	docker compose exec php vendor/bin/phpunit --coverage-html coverage --whitelist src/
