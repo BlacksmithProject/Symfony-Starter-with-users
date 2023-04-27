@@ -17,19 +17,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ResetPassword extends Command
 {
-    private ForgottenPasswordDeclaration $forgottenPasswordDeclaration;
-    private PasswordReset $passwordReset;
-    private IHashPasswords $passwordHasher;
-
-    public function __construct(ForgottenPasswordDeclaration $forgottenPasswordDeclaration, PasswordReset $passwordReset, IHashPasswords $passwordHasher)
-    {
+    public function __construct(
+        private readonly ForgottenPasswordDeclaration $forgottenPasswordDeclaration,
+        private readonly PasswordReset $passwordReset,
+        private readonly IHashPasswords $passwordHasher,
+    ) {
         parent::__construct('user:reset-password');
-        $this->forgottenPasswordDeclaration = $forgottenPasswordDeclaration;
-        $this->passwordReset = $passwordReset;
-        $this->passwordHasher = $passwordHasher;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('reset a user password for provided email and new password')
             ->addOption('email', 'email', InputOption::VALUE_OPTIONAL, 'provided email - MUST BE VALID')
@@ -44,6 +40,8 @@ final class ResetPassword extends Command
             $email = $input->getOption('email') ?? $io->ask('Email ?', '');
             $newPassword = $input->getOption('password') ?? $io->ask('New password ?', '');
 
+            $email = is_string($email) ? $email : throw new \Exception();
+            $newPassword = is_string($newPassword) ? $newPassword : throw new \Exception();
             $email = new Email($email);
             $password = Password::fromPlainPassword($newPassword, $this->passwordHasher);
 
@@ -54,7 +52,7 @@ final class ResetPassword extends Command
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
-            $io->writeln((string) $user->getId());
+            $io->writeln($user->getId()->value);
             $io->writeln('Authentication Token : ');
             $io->writeln($user->getToken()->getValue());
 

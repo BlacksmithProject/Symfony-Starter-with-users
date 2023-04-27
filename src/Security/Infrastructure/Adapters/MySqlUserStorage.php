@@ -123,7 +123,7 @@ final class MySqlUserStorage implements IStoreUsers
         $this->connection->insert(
             'security_users',
             [
-                'id' => $user->getId()->jsonSerialize(),
+                'id' => $user->getId()->value,
                 'email' => $user->getEmail()->value(),
                 'password' => $user->getPassword()->value(),
                 'created_at' => $now,

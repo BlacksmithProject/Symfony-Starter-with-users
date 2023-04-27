@@ -34,7 +34,13 @@ final readonly class MySqlTokenStorage implements IProvideTokens, IStoreTokens
             ->setParameter('type', $tokenType->value)
             ->fetchAssociative();
 
-        if ($result === false) {
+        if (
+            $result === false
+            || is_string($result['value']) === false
+            || is_string($result['created_at']) === false
+            || is_string($result['expired_at']) === false
+            || is_string($result['type']) === false
+        ) {
             throw new TokenNotFound();
         }
 
@@ -63,7 +69,14 @@ final readonly class MySqlTokenStorage implements IProvideTokens, IStoreTokens
             ->setParameter('type', $tokenType->value)
             ->fetchAssociative();
 
-        if ($result === false) {
+        if (
+            $result === false
+            || is_string($result['id']) === false
+            || is_string($result['value']) === false
+            || is_string($result['created_at']) === false
+            || is_string($result['expired_at']) === false
+            || is_string($result['type']) === false
+        ) {
             throw new TokenNotFound();
         }
 

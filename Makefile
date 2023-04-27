@@ -1,6 +1,6 @@
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : init help build up start down logs sh composer vendor sf cc migrations-generate migrations-execute test test-with-coverage
+.PHONY        : init help build up start down logs sh composer vendor sf cc migrations-generate migrations-execute test test-with-coverage cs stan
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 init: start vendor cc migrations-execute  ## Build and start the containers, install vendors and run migrations
@@ -54,5 +54,8 @@ test: ## Launch PHPUnit
 test-with-coverage: ## Launch PHPUnit and generate a coverage
 	docker compose exec php vendor/bin/phpunit --coverage-html coverage --whitelist src/
 
-phpcs:
+cs:
 	docker compose exec php vendor/bin/php-cs-fixer fix src/ tests/ --config=.php-cs-fixer.dist.php
+
+stan:
+	docker compose exec php vendor/bin/phpstan analyse src/ tests/ --level=max

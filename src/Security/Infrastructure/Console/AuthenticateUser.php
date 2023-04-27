@@ -15,15 +15,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class AuthenticateUser extends Command
 {
-    private Authentication $authentication;
-
-    public function __construct(Authentication $authentication)
+    public function __construct(private readonly Authentication $authentication)
     {
         parent::__construct('user:authenticate');
-        $this->authentication = $authentication;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('Authenticate a user with its email and password')
             ->addOption('email', 'email', InputOption::VALUE_OPTIONAL, 'provided email - MUST BE VALID')
@@ -38,6 +35,8 @@ final class AuthenticateUser extends Command
             $email = $input->getOption('email') ?? $io->ask('Email ?', '');
             $password = $input->getOption('password') ?? $io->ask('Password ?', '');
 
+            $email = is_string($email) ? $email : throw new \Exception();
+            $password = is_string($password) ? $password : throw new \Exception();
             $email = new Email($email);
             $password = new Password($password);
 
@@ -45,7 +44,7 @@ final class AuthenticateUser extends Command
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
-            $io->writeln((string) $user->getId());
+            $io->writeln($user->getId()->value);
             $io->writeln('Authentication Token : ');
             $io->writeln($user->getToken()->getValue());
 

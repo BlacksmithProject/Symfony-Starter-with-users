@@ -44,7 +44,12 @@ final class MySqlUserProvider implements IProvideUsers
             ->setParameter('email', $email->value())
             ->fetchAssociative();
 
-        if ($userData === false) {
+        if (
+            $userData === false
+            || is_string($userData['id']) === false
+            || is_string($userData['password']) === false
+            || is_string($userData['is_active']) === false
+        ) {
             throw new UserNotFound();
         }
 
@@ -75,7 +80,12 @@ final class MySqlUserProvider implements IProvideUsers
             ->setParameter('id', $userId)
             ->fetchAssociative();
 
-        if ($userData === false) {
+        if (
+            $userData === false
+            || is_string($userData['email']) === false
+            || is_string($userData['password']) === false
+            || is_string($userData['is_active']) === false
+        ) {
             throw new UserNotFound();
         }
 

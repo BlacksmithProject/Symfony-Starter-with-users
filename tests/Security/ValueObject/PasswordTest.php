@@ -25,6 +25,7 @@ final class PasswordTest extends TestCase
         Password::fromPlainPassword($plainPassword, new BcryptPasswordHandler());
     }
 
+    /** @return array<array<string>> */
     public function provideTooShortPasswords(): array
     {
         return [
@@ -51,6 +52,7 @@ final class PasswordTest extends TestCase
         Password::fromPlainPassword($plainPassword, new BcryptPasswordHandler());
     }
 
+    /** @return array<array<string>> */
     public function provideBlankPasswords(): array
     {
         return [

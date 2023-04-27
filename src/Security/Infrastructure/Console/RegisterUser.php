@@ -17,19 +17,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class RegisterUser extends Command
 {
-    private Registration $registration;
-    private Activation $activation;
-    private IHashPasswords $passwordHasher;
-
-    public function __construct(Registration $registration, Activation $activation, IHashPasswords $passwordHasher)
-    {
+    public function __construct(
+        private readonly Registration $registration,
+        private readonly Activation $activation,
+        private readonly IHashPasswords $passwordHasher,
+    ) {
         parent::__construct('user:register');
-        $this->registration = $registration;
-        $this->activation = $activation;
-        $this->passwordHasher = $passwordHasher;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setHelp('Create an activated user with an email and a password')
             ->addOption('email', 'email', InputOption::VALUE_OPTIONAL, 'provided email - MUST BE VALID')
@@ -44,6 +40,8 @@ final class RegisterUser extends Command
             $email = $input->getOption('email') ?? $io->ask('Email ?', '');
             $password = $input->getOption('password') ?? $io->ask('Password ?', '');
 
+            $email = is_string($email) ? $email : throw new \Exception();
+            $password = is_string($password) ? $password : throw new \Exception();
             $email = new Email($email);
             $password = Password::fromPlainPassword($password, $this->passwordHasher);
 
@@ -54,7 +52,7 @@ final class RegisterUser extends Command
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
-            $io->writeln((string) $user->getId());
+            $io->writeln($user->getId()->value);
             $io->writeln('Authentication Token : ');
             $io->writeln($user->getToken()->getValue());
 

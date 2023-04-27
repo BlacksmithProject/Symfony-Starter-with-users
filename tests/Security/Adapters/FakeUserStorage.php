@@ -11,10 +11,12 @@ use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Identity;
+use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\TokenType;
 
 final class FakeUserStorage implements IStoreUsers, IProvideUsers
 {
+    /** @var array<string, array{id: Identity, email: Email, password: Password, isActive: bool}> */
     public static array $users;
 
     private FakeTokenStorage $tokenStorage;
