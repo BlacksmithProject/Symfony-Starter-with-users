@@ -42,20 +42,20 @@ cc: sf
 
 ## —— Tools 🔧 —————————————————————————————————————————————————————————————————
 
-migrations-generate:
+migrations-generate: ## Generate doctrine migration
 	docker compose exec php bin/console doctrine:migrations:generate
 
-migrations-execute:
+migrations-execute: ## Execute doctrine migrations
 	docker compose exec php bin/console doctrine:migrations:migrate --no-interaction
 
-test: ## Launch PHPUnit
+test: ## Launch phpunit
 	docker compose exec php vendor/bin/phpunit
 
 test-with-coverage: ## Launch PHPUnit and generate a coverage
 	docker compose exec php vendor/bin/phpunit --coverage-html coverage --whitelist src/
 
-cs:
+cs: ## Launch php-cs-fixer
 	docker compose exec php vendor/bin/php-cs-fixer fix src/ tests/ --config=.php-cs-fixer.dist.php
 
-stan:
+stan: ## Launch phpstan
 	docker compose exec php vendor/bin/phpstan analyse src/ tests/ --level=max
