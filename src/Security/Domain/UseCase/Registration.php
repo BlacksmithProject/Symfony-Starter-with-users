@@ -7,28 +7,22 @@ namespace App\Security\Domain\UseCase;
 use App\Security\Domain\Exception\EmailIsInvalidOrAlreadyTaken;
 use App\Security\Domain\Exception\TokenNotFound;
 use App\Security\Domain\Model\UserBuilder;
+use App\Security\Domain\Ports\IProvideIdentity;
 use App\Security\Domain\Ports\IProvideTokens;
 use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\Token;
 use App\Security\Domain\ValueObject\TokenType;
-use Symfony\Component\Uid\Uuid;
 
-final class Registration
+final readonly class Registration
 {
-    private IStoreUsers $userStorage;
-    private UserBuilder $userBuilder;
-    private IProvideTokens $tokenProvider;
-
     public function __construct(
-        IStoreUsers $userStorage,
-        UserBuilder $userBuilder,
-        IProvideTokens $tokenProvider,
+        private IStoreUsers $userStorage,
+        private UserBuilder $userBuilder,
+        private IProvideTokens $tokenProvider,
+        private IProvideIdentity $identityProvider,
     ) {
-        $this->userStorage = $userStorage;
-        $this->userBuilder = $userBuilder;
-        $this->tokenProvider = $tokenProvider;
     }
 
     /**
@@ -41,7 +35,7 @@ final class Registration
             throw new EmailIsInvalidOrAlreadyTaken();
         }
 
-        $userId = Uuid::v4();
+        $userId = $this->identityProvider->generate();
 
         $user = $this->userBuilder->buildInactiveWithActivationToken($userId, $email, $password, $occurredOn);
 

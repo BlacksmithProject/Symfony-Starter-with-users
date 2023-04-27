@@ -7,24 +7,21 @@ namespace App\Security\Infrastructure\Adapters;
 use App\Security\Domain\Exception\TokenNotFound;
 use App\Security\Domain\Ports\IProvideTokens;
 use App\Security\Domain\Ports\IStoreTokens;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\Token;
 use App\Security\Domain\ValueObject\TokenType;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Uid\Uuid;
 
-final class MySqlTokenStorage implements IProvideTokens, IStoreTokens
+final readonly class MySqlTokenStorage implements IProvideTokens, IStoreTokens
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     /**
      * @throws TokenNotFound
      */
-    public function getToken(Uuid $userId, TokenType $tokenType): Token
+    public function getToken(Identity $userId, TokenType $tokenType): Token
     {
         $result = $this->connection->createQueryBuilder()
             ->select('security_tokens.*')
@@ -71,7 +68,7 @@ final class MySqlTokenStorage implements IProvideTokens, IStoreTokens
         }
 
         return new Token(
-            Uuid::fromString($result['id']),
+            new Identity($result['id']),
             $result['value'],
             new \DateTimeImmutable($result['created_at']),
             new \DateTimeImmutable($result['expired_at']),
@@ -104,12 +101,12 @@ final class MySqlTokenStorage implements IProvideTokens, IStoreTokens
         );
     }
 
-    public function removeToken(Uuid $userId, TokenType $tokenType): void
+    public function removeToken(Identity $userId, TokenType $tokenType): void
     {
         $this->connection->delete(
             'security_tokens',
             [
-                'user_id' => $userId,
+                'user_id' => $userId->value,
                 'type' => $tokenType->value,
             ]
         );

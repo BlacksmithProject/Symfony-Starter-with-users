@@ -5,35 +5,24 @@ declare(strict_types=1);
 namespace App\Security\Domain\Model;
 
 use App\Security\Domain\ValueObject\Email;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\Token;
-use Symfony\Component\Uid\Uuid;
 
-final class User
+final readonly class User
 {
-    private Uuid $uuid;
-    private Email $email;
-    private Password $password;
-    private bool $isActive;
-    private Token $token;
-
     public function __construct(
-        Uuid $uuid,
-        Email $email,
-        Password $password,
-        bool $isActive,
-        Token $token
+        private Identity $id,
+        private Email $email,
+        private Password $password,
+        private bool $isActive,
+        private Token $token
     ) {
-        $this->uuid = $uuid;
-        $this->email = $email;
-        $this->password = $password;
-        $this->isActive = $isActive;
-        $this->token = $token;
     }
 
-    public function getUuid(): Uuid
+    public function getId(): Identity
     {
-        return $this->uuid;
+        return $this->id;
     }
 
     public function getEmail(): Email

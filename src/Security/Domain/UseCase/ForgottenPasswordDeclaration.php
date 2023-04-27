@@ -11,17 +11,13 @@ use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\Email;
 
-final class ForgottenPasswordDeclaration
+final readonly class ForgottenPasswordDeclaration
 {
-    private IProvideUsers $userProvider;
-    private UserBuilder $userBuilder;
-    private IStoreUsers $userStorage;
-
-    public function __construct(IProvideUsers $userProvider, UserBuilder $userBuilder, IStoreUsers $userStorage)
-    {
-        $this->userProvider = $userProvider;
-        $this->userBuilder = $userBuilder;
-        $this->userStorage = $userStorage;
+    public function __construct(
+        private IProvideUsers $userProvider,
+        private UserBuilder $userBuilder,
+        private IStoreUsers $userStorage,
+    ) {
     }
 
     /**
@@ -31,7 +27,7 @@ final class ForgottenPasswordDeclaration
     {
         $activatedUser = $this->userProvider->getActivatedUser($email);
         $forgottenPasswordUser = $this->userBuilder->buildWithForgottenPasswordToken(
-            $activatedUser->getUuid(),
+            $activatedUser->getId(),
             $activatedUser->getEmail(),
             $activatedUser->getPassword(),
             $occurredOn,

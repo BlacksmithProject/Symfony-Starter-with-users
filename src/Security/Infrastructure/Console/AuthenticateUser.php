@@ -45,7 +45,7 @@ final class AuthenticateUser extends Command
 
             $io->writeln('Success !');
             $io->writeln('Authenticated User : ');
-            $io->writeln((string) $user->getUuid());
+            $io->writeln((string) $user->getId());
             $io->writeln('Authentication Token : ');
             $io->writeln($user->getToken()->getValue());
 

@@ -14,23 +14,14 @@ use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\TokenType;
 
-final class Activation
+final readonly class Activation
 {
-    private IProvideTokens $tokenProvider;
-    private IProvideUsers $userProvider;
-    private IStoreUsers $userStorage;
-    private UserBuilder $userBuilder;
-
     public function __construct(
-        IProvideTokens $tokenProvider,
-        IProvideUsers $userProvider,
-        IStoreUsers $userStorage,
-        UserBuilder $userBuilder
+        private IProvideTokens $tokenProvider,
+        private IProvideUsers $userProvider,
+        private IStoreUsers $userStorage,
+        private UserBuilder $userBuilder
     ) {
-        $this->tokenProvider = $tokenProvider;
-        $this->userProvider = $userProvider;
-        $this->userStorage = $userStorage;
-        $this->userBuilder = $userBuilder;
     }
 
     /**
@@ -48,7 +39,7 @@ final class Activation
 
         $userToActivate = $this->userProvider->getUserToActivate($activationToken->getUserId());
         $activatedUser = $this->userBuilder->buildActiveWithAuthenticationToken(
-            $userToActivate->getUuid(),
+            $userToActivate->getId(),
             $userToActivate->getEmail(),
             $userToActivate->getPassword(),
             $occurredOn

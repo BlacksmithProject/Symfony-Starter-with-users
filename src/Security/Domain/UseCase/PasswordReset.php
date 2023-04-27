@@ -15,23 +15,14 @@ use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\TokenType;
 
-final class PasswordReset
+final readonly class PasswordReset
 {
-    private IProvideTokens $tokenProvider;
-    private IProvideUsers $userProvider;
-    private IStoreUsers $userStorage;
-    private UserBuilder $userBuilder;
-
     public function __construct(
-        IProvideTokens $tokenProvider,
-        IProvideUsers $userProvider,
-        UserBuilder $userBuilder,
-        IStoreUsers $userStorage,
+        private IProvideTokens $tokenProvider,
+        private IProvideUsers $userProvider,
+        private UserBuilder $userBuilder,
+        private IStoreUsers $userStorage,
     ) {
-        $this->tokenProvider = $tokenProvider;
-        $this->userProvider = $userProvider;
-        $this->userStorage = $userStorage;
-        $this->userBuilder = $userBuilder;
     }
 
     /**
@@ -50,7 +41,7 @@ final class PasswordReset
         $forgottenPasswordUser = $this->userProvider->getForgottenPasswordUser($token->getUserId());
 
         $authenticatedUser = $this->userBuilder->buildActiveWithAuthenticationToken(
-            $forgottenPasswordUser->getUuid(),
+            $forgottenPasswordUser->getId(),
             $forgottenPasswordUser->getEmail(),
             $newPassword,
             $occurredOn,

@@ -10,8 +10,8 @@ use App\Security\Domain\Model\User;
 use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreUsers;
 use App\Security\Domain\ValueObject\Email;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\TokenType;
-use Symfony\Component\Uid\Uuid;
 
 final class FakeUserStorage implements IStoreUsers, IProvideUsers
 {
@@ -25,7 +25,7 @@ final class FakeUserStorage implements IStoreUsers, IProvideUsers
         $this->tokenStorage = $tokenStorage;
     }
 
-    public function getUserToActivate(Uuid $userId): User
+    public function getUserToActivate(Identity $userId): User
     {
         return $this->getByIdAndTokenType($userId, TokenType::ACTIVATION);
     }
@@ -45,7 +45,7 @@ final class FakeUserStorage implements IStoreUsers, IProvideUsers
         return $this->getByIdAndTokenType($userId, TokenType::AUTHENTICATION);
     }
 
-    public function getForgottenPasswordUser(Uuid $userId): User
+    public function getForgottenPasswordUser(Identity $userId): User
     {
         return $this->getByIdAndTokenType($userId, TokenType::FORGOTTEN_PASSWORD);
     }
@@ -69,28 +69,28 @@ final class FakeUserStorage implements IStoreUsers, IProvideUsers
 
     public function activate(User $user): void
     {
-        $this->save(new User($user->getUuid(), $user->getEmail(), $user->getPassword(), true, $user->getToken()));
-        $this->tokenStorage->remove($user->getUuid(), TokenType::ACTIVATION);
+        $this->save(new User($user->getId(), $user->getEmail(), $user->getPassword(), true, $user->getToken()));
+        $this->tokenStorage->remove($user->getId(), TokenType::ACTIVATION);
         $this->tokenStorage->save($user->getToken());
     }
 
     public function renewForgottenPassword(User $user): void
     {
-        $this->tokenStorage->remove($user->getUuid(), TokenType::FORGOTTEN_PASSWORD);
+        $this->tokenStorage->remove($user->getId(), TokenType::FORGOTTEN_PASSWORD);
         $this->tokenStorage->save($user->getToken());
     }
 
     public function updatePassword(User $user): void
     {
         $this->save($user);
-        $this->tokenStorage->remove($user->getUuid(), TokenType::FORGOTTEN_PASSWORD);
+        $this->tokenStorage->remove($user->getId(), TokenType::FORGOTTEN_PASSWORD);
         $this->tokenStorage->save($user->getToken());
     }
 
     private function save(User $user): void
     {
-        self::$users[$user->getUuid()->jsonSerialize()] = [
-            'id' => $user->getUuid(),
+        self::$users[$user->getId()->value] = [
+            'id' => $user->getId(),
             'email' => $user->getEmail(),
             'password' => $user->getPassword(),
             'isActive' => $user->isActive(),
@@ -101,15 +101,15 @@ final class FakeUserStorage implements IStoreUsers, IProvideUsers
      * @throws TokenNotFound
      * @throws UserNotFound
      */
-    private function getByIdAndTokenType(Uuid $userId, TokenType $tokenType): User
+    private function getByIdAndTokenType(Identity $userId, TokenType $tokenType): User
     {
         $token = $this->tokenStorage->getToken($userId, $tokenType);
 
-        if (!isset(self::$users[$userId->jsonSerialize()])) {
+        if (!isset(self::$users[$userId->value])) {
             throw new UserNotFound();
         }
 
-        $userData = self::$users[$userId->jsonSerialize()];
+        $userData = self::$users[$userId->value];
 
         return new User(
             $userData['id'],

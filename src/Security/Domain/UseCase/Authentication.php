@@ -15,23 +15,14 @@ use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\TokenType;
 
-final class Authentication
+final readonly class Authentication
 {
-    private IProvideUsers $userProvider;
-    private IStoreTokens $tokenStorage;
-    private IGenerateTokens $tokenGenerator;
-    private IVerifyPasswords $passwordVerifier;
-
     public function __construct(
-        IProvideUsers $userProvider,
-        IStoreTokens $tokenStorage,
-        IGenerateTokens $tokenGenerator,
-        IVerifyPasswords $passwordVerifier
+        private IProvideUsers $userProvider,
+        private IStoreTokens $tokenStorage,
+        private IGenerateTokens $tokenGenerator,
+        private IVerifyPasswords $passwordVerifier
     ) {
-        $this->userProvider = $userProvider;
-        $this->tokenStorage = $tokenStorage;
-        $this->tokenGenerator = $tokenGenerator;
-        $this->passwordVerifier = $passwordVerifier;
     }
 
     /**
@@ -46,7 +37,7 @@ final class Authentication
         if ($user->getToken()->isExpired()) {
             $this->tokenStorage->renew(
                 $this->tokenGenerator->generate(
-                    $user->getUuid(),
+                    $user->getId(),
                     TokenType::AUTHENTICATION,
                     $occurredOn,
                 ),

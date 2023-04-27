@@ -9,10 +9,10 @@ use App\Security\Domain\Exception\UserNotFound;
 use App\Security\Domain\Model\User;
 use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\ValueObject\Email;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\TokenType;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Uid\Uuid;
 
 final class MySqlUserProvider implements IProvideUsers
 {
@@ -29,7 +29,7 @@ final class MySqlUserProvider implements IProvideUsers
      * @throws TokenNotFound
      * @throws UserNotFound
      */
-    public function getUserToActivate(Uuid $userId): User
+    public function getUserToActivate(Identity $userId): User
     {
         return $this->getUserByIdAndTokenType($userId, TokenType::ACTIVATION);
     }
@@ -48,7 +48,7 @@ final class MySqlUserProvider implements IProvideUsers
             throw new UserNotFound();
         }
 
-        $userId = Uuid::fromString($userData['id']);
+        $userId = new Identity($userData['id']);
 
         $token = $this->tokenStorage->getToken($userId, TokenType::AUTHENTICATION);
 
@@ -61,12 +61,12 @@ final class MySqlUserProvider implements IProvideUsers
         );
     }
 
-    public function getForgottenPasswordUser(Uuid $userId): User
+    public function getForgottenPasswordUser(Identity $userId): User
     {
         return $this->getUserByIdAndTokenType($userId, TokenType::FORGOTTEN_PASSWORD);
     }
 
-    private function getUserByIdAndTokenType(Uuid $userId, TokenType $tokenType): User
+    private function getUserByIdAndTokenType(Identity $userId, TokenType $tokenType): User
     {
         $userData = $this->connection->createQueryBuilder()
             ->select('security_users.email, security_users.password, security_users.is_active')

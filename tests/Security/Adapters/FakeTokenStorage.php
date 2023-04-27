@@ -7,9 +7,9 @@ namespace App\Tests\Security\Adapters;
 use App\Security\Domain\Exception\TokenNotFound;
 use App\Security\Domain\Ports\IProvideTokens;
 use App\Security\Domain\Ports\IStoreTokens;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\Token;
 use App\Security\Domain\ValueObject\TokenType;
-use Symfony\Component\Uid\Uuid;
 
 final class FakeTokenStorage implements IStoreTokens, IProvideTokens
 {
@@ -21,9 +21,9 @@ final class FakeTokenStorage implements IStoreTokens, IProvideTokens
         self::$tokens = [];
     }
 
-    public function getToken(Uuid $userId, TokenType $tokenType): Token
+    public function getToken(Identity $userId, TokenType $tokenType): Token
     {
-        return self::$tokens[$userId->jsonSerialize()][$tokenType->value];
+        return self::$tokens[$userId->value][$tokenType->value];
     }
 
     public function getTokenByValue(string $value, TokenType $tokenType): Token
@@ -45,11 +45,11 @@ final class FakeTokenStorage implements IStoreTokens, IProvideTokens
 
     public function save(Token $token): void
     {
-        self::$tokens[$token->getUserId()->jsonSerialize()][$token->getTokenType()->value] = $token;
+        self::$tokens[$token->getUserId()->value][$token->getTokenType()->value] = $token;
     }
 
-    public function remove(Uuid $userId, TokenType $tokenType): void
+    public function remove(Identity $userId, TokenType $tokenType): void
     {
-        unset(self::$tokens[$userId->jsonSerialize()][$tokenType->value]);
+        unset(self::$tokens[$userId->value][$tokenType->value]);
     }
 }

@@ -8,6 +8,7 @@ use App\Security\Domain\Model\User;
 use App\Security\Domain\Model\UserBuilder;
 use App\Security\Domain\Ports\IGenerateTokens;
 use App\Security\Domain\Ports\IHashPasswords;
+use App\Security\Domain\Ports\IProvideIdentity;
 use App\Security\Domain\Ports\IProvideTokens;
 use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreTokens;
@@ -23,6 +24,7 @@ use App\Security\Domain\ValueObject\Password;
 use App\Security\Domain\ValueObject\Token;
 use App\Security\Infrastructure\Adapters\BcryptPasswordHandler;
 use App\Security\Infrastructure\Adapters\TokensGenerator;
+use App\Security\Infrastructure\Adapters\UuidProvider;
 use App\Tests\Security\Adapters\FakeTokenStorage;
 use App\Tests\Security\Adapters\FakeUserStorage;
 use PHPUnit\Framework\TestCase;
@@ -39,12 +41,15 @@ abstract class AbstractTestCase extends TestCase
 
     private UserBuilder $userBuilder;
 
+    private IProvideIdentity $identityProvider;
+
     protected function setUp(): void
     {
         $tokenStorage = new FakeTokenStorage();
         $userStorage = new FakeUserStorage($tokenStorage);
         $passwordHandler = new BcryptPasswordHandler();
         $tokenGenerator = new TokensGenerator();
+        $identityProvider = new UuidProvider();
 
         $this->tokenGenerator = $tokenGenerator;
         $this->passwordHasher = $passwordHandler;
@@ -53,6 +58,7 @@ abstract class AbstractTestCase extends TestCase
         $this->tokenStorage = $tokenStorage;
         $this->userStorage = $userStorage;
         $this->passwordVerifier = $passwordHandler;
+        $this->identityProvider = $identityProvider;
 
         $this->userBuilder = new UserBuilder($tokenGenerator);
     }
@@ -94,7 +100,8 @@ abstract class AbstractTestCase extends TestCase
         return new Registration(
             $this->userStorage,
             $this->userBuilder,
-            $this->tokenProvider
+            $this->tokenProvider,
+            $this->identityProvider,
         );
     }
 
@@ -104,7 +111,7 @@ abstract class AbstractTestCase extends TestCase
             $this->tokenProvider,
             $this->userProvider,
             $this->userStorage,
-            $this->userBuilder
+            $this->userBuilder,
         );
     }
 

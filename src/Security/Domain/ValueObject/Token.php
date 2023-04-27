@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Security\Domain\ValueObject;
 
-use Symfony\Component\Uid\Uuid;
-
 final class Token
 {
-    private Uuid $userId;
+    private Identity $userId;
     private string $value;
     private \DateTimeImmutable $createdAt;
     private \DateTimeImmutable $expiredAt;
     private TokenType $tokenType;
 
     public function __construct(
-        Uuid $userId,
+        Identity $userId,
         string $value,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $expiredAt,
@@ -28,7 +26,7 @@ final class Token
         $this->tokenType = $tokenType;
     }
 
-    public function getUserId(): Uuid
+    public function getUserId(): Identity
     {
         return $this->userId;
     }

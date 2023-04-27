@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Adapters;
 
 use App\Security\Domain\Ports\IGenerateTokens;
+use App\Security\Domain\ValueObject\Identity;
 use App\Security\Domain\ValueObject\Token;
 use App\Security\Domain\ValueObject\TokenType;
-use Symfony\Component\Uid\Uuid;
 
 final class TokensGenerator implements IGenerateTokens
 {
-    public function generate(Uuid $userId, TokenType $tokenType, \DateTimeImmutable $occurredOn): Token
+    public function generate(Identity $userId, TokenType $tokenType, \DateTimeImmutable $occurredOn): Token
     {
         $duration = match ($tokenType) {
             default => new \DateInterval('P1D'),

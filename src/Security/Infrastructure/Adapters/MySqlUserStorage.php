@@ -64,7 +64,7 @@ final class MySqlUserStorage implements IStoreUsers
                     'updated_at' => new \DateTimeImmutable(),
                 ],
                 [
-                    'id' => $user->getUuid(),
+                    'id' => $user->getId(),
                 ],
                 [
                     'is_active' => 'boolean',
@@ -72,7 +72,7 @@ final class MySqlUserStorage implements IStoreUsers
                 ]
             );
 
-            $this->tokenStorage->removeToken($user->getUuid(), TokenType::ACTIVATION);
+            $this->tokenStorage->removeToken($user->getId(), TokenType::ACTIVATION);
             $this->tokenStorage->saveToken($user->getToken());
 
             $this->connection->commit();
@@ -85,7 +85,7 @@ final class MySqlUserStorage implements IStoreUsers
 
     public function renewForgottenPassword(User $user): void
     {
-        $this->tokenStorage->removeToken($user->getUuid(), TokenType::FORGOTTEN_PASSWORD);
+        $this->tokenStorage->removeToken($user->getId(), TokenType::FORGOTTEN_PASSWORD);
         $this->tokenStorage->saveToken($user->getToken());
     }
 
@@ -100,14 +100,14 @@ final class MySqlUserStorage implements IStoreUsers
                     'updated_at' => new \DateTimeImmutable(),
                 ],
                 [
-                    'id' => $user->getUuid(),
+                    'id' => $user->getId(),
                 ],
                 [
                     'updated_at' => 'datetime',
                 ]
             );
 
-            $this->tokenStorage->removeToken($user->getUuid(), TokenType::FORGOTTEN_PASSWORD);
+            $this->tokenStorage->removeToken($user->getId(), TokenType::FORGOTTEN_PASSWORD);
             $this->tokenStorage->renew($user->getToken());
 
             $this->connection->commit();
@@ -123,7 +123,7 @@ final class MySqlUserStorage implements IStoreUsers
         $this->connection->insert(
             'security_users',
             [
-                'id' => $user->getUuid()->jsonSerialize(),
+                'id' => $user->getId()->jsonSerialize(),
                 'email' => $user->getEmail()->value(),
                 'password' => $user->getPassword()->value(),
                 'created_at' => $now,
