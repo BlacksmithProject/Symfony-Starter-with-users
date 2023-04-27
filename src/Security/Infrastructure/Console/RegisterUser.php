@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Console;
 
 use App\Security\Domain\Ports\IHashPasswords;
+use App\Security\Domain\UseCase\Activation;
+use App\Security\Domain\UseCase\Registration;
 use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Password;
-use App\Security\Domain\UseCase\Registration;
-use App\Security\Domain\UseCase\Activation;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

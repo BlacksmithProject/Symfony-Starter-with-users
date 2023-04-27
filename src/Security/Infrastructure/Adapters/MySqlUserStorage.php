@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Adapters;
@@ -127,7 +128,7 @@ final class MySqlUserStorage implements IStoreUsers
                 'password' => $user->getPassword()->value(),
                 'created_at' => $now,
                 'updated_at' => $now,
-                'is_active' => $user->isActive()
+                'is_active' => $user->isActive(),
             ],
             [
                 'created_at' => 'datetime',

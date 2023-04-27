@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\UseCase;
@@ -48,11 +49,11 @@ final class PasswordReset
 
         $forgottenPasswordUser = $this->userProvider->getForgottenPasswordUser($token->getUserId());
 
-        $authenticatedUser =  $this->userBuilder->buildActiveWithAuthenticationToken(
+        $authenticatedUser = $this->userBuilder->buildActiveWithAuthenticationToken(
             $forgottenPasswordUser->getUuid(),
             $forgottenPasswordUser->getEmail(),
             $newPassword,
-            $occurredOn
+            $occurredOn,
         );
 
         $this->userStorage->updatePassword($authenticatedUser);

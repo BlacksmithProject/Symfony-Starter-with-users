@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\Security\UseCase;
@@ -48,6 +49,5 @@ final class RegistrationTest extends AbstractTestCase
 
         // WHEN
         $this->useCase->execute($email, $password, new \DateTimeImmutable());
-
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Adapters;
@@ -52,7 +53,7 @@ final class MySqlTokenStorage implements IProvideTokens, IStoreTokens
     /**
      * @throws TokenNotFound
      */
-    public function getTokenByValue(string $tokenValue, TokenType $tokenType): Token
+    public function getTokenByValue(string $value, TokenType $tokenType): Token
     {
         $result = $this->connection->createQueryBuilder()
             ->select('security_tokens.*, security_users.id')
@@ -60,7 +61,7 @@ final class MySqlTokenStorage implements IProvideTokens, IStoreTokens
             ->join('security_tokens', 'security_users', 'security_users', 'security_users.id = security_tokens.user_id')
             ->where('security_tokens.value = :value')
             ->andWhere('security_tokens.type = :type')
-            ->setParameter('value', $tokenValue)
+            ->setParameter('value', $value)
             ->setParameter('isActive', true)
             ->setParameter('type', $tokenType->value)
             ->fetchAssociative();

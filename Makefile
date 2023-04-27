@@ -29,7 +29,7 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 	docker compose exec php composer $(c)
 
 vendor: ## Install vendors according to the current composer.lock file
-vendor: c=install --prefer-dist --no-dev --no-progress --no-scripts --no-interaction
+vendor: c=install --prefer-dist --no-progress --no-scripts --no-interaction
 vendor: composer
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
@@ -53,3 +53,6 @@ test: ## Launch PHPUnit
 
 test-with-coverage: ## Launch PHPUnit and generate a coverage
 	docker compose exec php vendor/bin/phpunit --coverage-html coverage --whitelist src/
+
+phpcs:
+	docker compose exec php vendor/bin/php-cs-fixer fix src/ tests/ --config=.php-cs-fixer.dist.php

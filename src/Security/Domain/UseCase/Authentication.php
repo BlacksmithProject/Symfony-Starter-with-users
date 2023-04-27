@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\UseCase;
 
 use App\Security\Domain\Exception\InvalidPassword;
-use App\Security\Domain\Exception\TokenIsExpired;
 use App\Security\Domain\Exception\UserNotFound;
 use App\Security\Domain\Model\User;
 use App\Security\Domain\Ports\IGenerateTokens;
@@ -44,11 +44,13 @@ final class Authentication
         $this->passwordVerifier->verify($password->value(), $user->getPassword()->value());
 
         if ($user->getToken()->isExpired()) {
-            $this->tokenStorage->renew($this->tokenGenerator->generate(
-                $user->getUuid(),
-                TokenType::AUTHENTICATION,
-                $occurredOn
-            ));
+            $this->tokenStorage->renew(
+                $this->tokenGenerator->generate(
+                    $user->getUuid(),
+                    TokenType::AUTHENTICATION,
+                    $occurredOn,
+                ),
+            );
 
             $user = $this->userProvider->getActivatedUser($email);
         }

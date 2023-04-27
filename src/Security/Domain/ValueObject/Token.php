@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\ValueObject;
@@ -18,7 +19,7 @@ final class Token
         string $value,
         \DateTimeImmutable $createdAt,
         \DateTimeImmutable $expiredAt,
-        TokenType $tokenType
+        TokenType $tokenType,
     ) {
         $this->userId = $userId;
         $this->value = $value;

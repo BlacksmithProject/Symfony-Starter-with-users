@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\UseCase;
@@ -11,7 +12,6 @@ use App\Security\Domain\Model\UserBuilder;
 use App\Security\Domain\Ports\IProvideTokens;
 use App\Security\Domain\Ports\IProvideUsers;
 use App\Security\Domain\Ports\IStoreUsers;
-use App\Security\Domain\ValueObject\Token;
 use App\Security\Domain\ValueObject\TokenType;
 
 final class Activation
@@ -36,7 +36,7 @@ final class Activation
     /**
      * @throws TokenIsExpired
      * @throws TokenNotFound
-     * @throws UserNotFound - should NEVER happen
+     * @throws UserNotFound   - should NEVER happen
      */
     public function execute(string $tokenValue, \DateTimeImmutable $occurredOn): User
     {

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Console;
 
+use App\Security\Domain\UseCase\Authentication;
 use App\Security\Domain\ValueObject\Email;
 use App\Security\Domain\ValueObject\Password;
-use App\Security\Domain\UseCase\Authentication;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -54,6 +55,5 @@ final class AuthenticateUser extends Command
 
             return Command::FAILURE;
         }
-
     }
 }

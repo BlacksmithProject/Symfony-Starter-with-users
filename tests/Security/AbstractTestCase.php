@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\Security;
@@ -37,14 +38,14 @@ abstract class AbstractTestCase extends TestCase
     protected IVerifyPasswords $passwordVerifier;
 
     private UserBuilder $userBuilder;
-    
+
     protected function setUp(): void
     {
         $tokenStorage = new FakeTokenStorage();
         $userStorage = new FakeUserStorage($tokenStorage);
         $passwordHandler = new BcryptPasswordHandler();
         $tokenGenerator = new TokensGenerator();
-        
+
         $this->tokenGenerator = $tokenGenerator;
         $this->passwordHasher = $passwordHandler;
         $this->tokenProvider = $tokenStorage;

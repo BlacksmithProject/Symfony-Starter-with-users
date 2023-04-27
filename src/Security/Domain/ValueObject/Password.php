@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\ValueObject;
@@ -21,10 +22,11 @@ final class Password
      */
     public static function fromPlainPassword(string $plainPassword, IHashPasswords $passwordHasher): self
     {
-        $plainPassword = trim($plainPassword, " ");
+        $plainPassword = trim($plainPassword, ' ');
         if (mb_strlen($plainPassword) < self::MIN_LENGTH) {
             throw new PasswordIsTooShort();
         }
+
         return new self($passwordHasher->hash($plainPassword));
     }
 

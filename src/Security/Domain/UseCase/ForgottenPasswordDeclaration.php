@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\UseCase;
@@ -33,7 +34,7 @@ final class ForgottenPasswordDeclaration
             $activatedUser->getUuid(),
             $activatedUser->getEmail(),
             $activatedUser->getPassword(),
-            $occurredOn
+            $occurredOn,
         );
 
         $this->userStorage->renewForgottenPassword($forgottenPasswordUser);

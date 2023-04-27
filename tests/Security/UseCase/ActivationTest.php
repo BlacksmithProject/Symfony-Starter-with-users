@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\Security\UseCase;
@@ -12,7 +13,7 @@ use App\Tests\Security\AbstractTestCase;
 final class ActivationTest extends AbstractTestCase
 {
     private Activation $useCase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();

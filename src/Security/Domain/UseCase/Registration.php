@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Security\Domain\UseCase;
@@ -32,7 +33,7 @@ final class Registration
 
     /**
      * @throws EmailIsInvalidOrAlreadyTaken
-     * @throws TokenNotFound - Should NEVER happen
+     * @throws TokenNotFound                - Should NEVER happen
      */
     public function execute(Email $email, Password $password, \DateTimeImmutable $occurredOn): Token
     {

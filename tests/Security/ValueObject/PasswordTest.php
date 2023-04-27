@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Tests\Security\ValueObject;
@@ -12,6 +13,7 @@ final class PasswordTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider provideTooShortPasswords
      */
     public function password must be at least 6 characters long(string $plainPassword): void
@@ -34,8 +36,10 @@ final class PasswordTest extends TestCase
             ['5 characters' => '12345'],
         ];
     }
+
     /**
      * @test
+     *
      * @dataProvider provideBlankPasswords
      */
     public function password cannot start or end with blank character(string $plainPassword): void
